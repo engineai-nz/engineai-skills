@@ -33,29 +33,16 @@ SKILLS = {
     "geo-report-pdf": "geo",
     "geo-schema": "geo",
     "geo-technical": "geo",
-    # Session lifecycle
-    "load-project": "session",
-    "resume": "session",
-    "resume-deep": "session",
-    "wrap": "session",
     # Review
     "adversarial-review": "review",
     "code-combat": "review",
-    # Meta
-    "autoresearch": "meta",
-    "skill-creator": "meta",
-    # Infrastructure
-    "openclaw-audit": "infra",
-    "unraid-troubleshooter": "infra",
-    # Standalone
-    "brainstorming": None,
+    # Engine AI delivery
     "brand": None,
-    "file-organizer": None,
     "humaniser": None,
-    "notebooklm": None,
-    "senior-architect": None,
-    "Stellar-Immigration-Agent-Skill.md": None,
-    "x-voice.skill": None,
+    "engineai-demo-package": None,
+    "project-workflow": None,
+    # June 2026: personal/session/meta/infra skills moved to benduchateau/dotclaude.
+    # This repo holds Engine AI product skills only.
 }
 
 SKIP_FILES = {".DS_Store", "Zone.Identifier", "Thumbs.db", "__pycache__"}

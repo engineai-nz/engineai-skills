@@ -6,9 +6,11 @@ description: >
   traditional SEO foundations. Performs full GEO audits, citability scoring,
   AI crawler analysis, llms.txt generation, brand mention scanning, platform-specific
   optimization, schema markup, technical SEO, content quality (E-E-A-T), and
-  client-ready GEO report generation. Use when user says "geo", "seo", "audit",
-  "AI search", "AI visibility", "optimize", "citability", "llms.txt", "schema",
-  "brand mentions", "GEO report", or any URL for analysis.
+  client-ready GEO report generation. Use when the user says "geo", "seo audit",
+  "geo audit", "AI search", "AI visibility", "citability", "llms.txt",
+  "brand mentions", or "GEO report", or explicitly asks to analyse a website's
+  search or AI visibility. Do NOT trigger on bare "audit", "optimize", "schema",
+  or a URL pasted without a search/visibility request.
 allowed-tools: Read, Grep, Glob, Bash, WebFetch, Write
 ---
 

@@ -1,5 +1,0 @@
-experiment	score	max_score	pass_rate	status	description
-0	24	25	96%	baseline	Baseline SKILL.md - all evals pass except EVAL1 on clean session (no skip-if-nothing-changed guidance)
-1	25	25	100%	keep	Added skip-if-nothing-changed guard to Step 1 — fixes EVAL1 clean session failure
-2	25	25	100%	keep	Removed bash snippet from Step 5 — simplified to intent-only. Score held.
-3	25	25	100%	keep	Removed bash snippet from Step 6 — simplified git check to intent-only. Score held.

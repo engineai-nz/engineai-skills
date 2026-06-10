@@ -1,5 +1,0 @@
-experiment	score	max_score	pass_rate	status	description
-0	20	25	80%	baseline	Template shows Linear/Notion lines for unconfigured projects. No fallback for non-project dirs.
-1	25	25	100%	keep	Added non-project fallback (Step 1) + omit unconfigured integration lines from template
-2	25	25	100%	keep	Removed literal API call code blocks from Steps 3 and 4; intent-only descriptions. Query patterns in references/projects.md
-3	25	25	100%	keep	Simplified git commands in Steps 5 and 6 to intent-only. All 4 checks still enumerated by name.

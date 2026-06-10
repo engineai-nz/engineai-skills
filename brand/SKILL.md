@@ -14,6 +14,13 @@ You are applying the Engine AI brand. This is a dark, premium, gold-accented ide
 built for a New Zealand AI consultancy. Every UI decision should feel precise,
 confident, and minimal. No corporate fluff. No generic SaaS aesthetic.
 
+> **Canonical design system (read first):** `~/projects/engineai/design-system/`
+> `DESIGN.md` is the authoritative handoff; `colors_and_type.css` holds all 120
+> tokens + component classes with exact values. For any real build, read those
+> first — they supersede the summary below on conflict (light theme + surfaces,
+> `gold-ink` for gold-on-light, product sub-page accents, type/motion floors).
+> This SKILL.md remains the quick reference and tone-of-voice guide.
+
 Reference site: engineai.co.nz
 Source repo: `~/projects/engineai_website_copy/`
 
