@@ -1,26 +1,22 @@
 ---
-name: engine-ai-brand
+name: brand
 description: >
-  Applies The Agent Maestros / Engine AI brand identity, design system, and visual language to any
-  React artifact, HTML page, dashboard, landing page, or interactive tool. Use this skill
-  whenever building ANYTHING visual for The Agent Maestros, Engine AI, Ben du Chateau, Joe Ward,
-  or any project that should carry the Agent Maestros or Engine AI look and feel. Trigger on:
-  "Agent Maestros", "Engine AI", "maestros brand", "maestros style", "engine ai brand",
-  "use the dark theme", "use our brand", "make it match the financial model", "same look as
-  the lean canvas", or any artifact that is part of the Agent Maestros / Engine AI business,
-  pitch materials, client deliverables, dashboards, or internal tools. Also trigger when the
-  user says "brand guidelines", "design system", or "our style" in the context of Agent Maestros
-  or Engine AI work. Also trigger for tone-of-voice tasks — copywriting, landing page copy,
-  proposal language — for Engine AI. Always apply this skill to Agent Maestros / Engine AI
-  artifacts even if the user doesn't explicitly ask for it — visual consistency is the default,
-  not the exception.
+  Engine AI / The Agent Maestros brand identity, design system, visual language, and tone of
+  voice. Use when building visual or written artifacts for Engine AI, The Agent Maestros,
+  Ben du Chateau, Joe Ward, or related client/internal work: React artifacts, HTML pages,
+  dashboards, landing pages, decks, proposals, financial models, lean canvases, client
+  deliverables, internal tools, copy, and tone-of-voice edits. Trigger on "Engine AI",
+  "Agent Maestros", "maestros brand", "maestros style", "engine ai brand", "use our brand",
+  "use the dark theme", "same look as the financial model", "brand guidelines", "design
+  system", or "our style" in this context. Apply by default to Engine AI / Agent Maestros
+  visual output.
 ---
 
 # The Agent Maestros / Engine AI — Brand & Design System
 
-> **Source of truth:** [engineai-nz/engineai-skills](https://github.com/engineai-nz/engineai-skills), `brand/SKILL.md` — extracted from the live site at engineai.co.nz. This file is the Cowork/artifact-adapted version of that spec: same tokens, palette, and voice, translated for inline-styled React/HTML artifacts (dashboards, financial models, decks) rather than the Tailwind/Next.js website build. When the canonical repo changes, pull the update through here too.
+> **Skill source of truth:** [engineai-nz/engineai-skills](https://github.com/engineai-nz/engineai-skills), `brand/SKILL.md`. This is the canonical packaged `brand` skill for Engine AI work.
 >
-> If working locally in Claude Code with repo access, the live site's own design system docs (`DESIGN.md` and `colors_and_type.css` in the `engineai` project) supersede this summary on any conflict. This file remains the quick-reference and tone-of-voice guide for artifact work.
+> **Design source of truth:** if working locally with repo access, read `/home/duchats/projects/engineai/design-system/DESIGN.md` and `/home/duchats/projects/engineai/design-system/colors_and_type.css` first. They supersede this summary on exact token values and component implementation. This file remains the quick-reference and tone-of-voice guide for artifact work.
 
 ## When to Use
 
@@ -47,9 +43,9 @@ Dark-mode first. Data-rich but not cluttered. The aesthetic says: *"we live in t
 
 ## Full Design Reference
 
-For the complete design system including all colour values, typography scale, component JSX snippets, chart configuration, and layout rules, read:
+For the complete artifact design reference, including colour values, typography scale, component patterns, chart configuration, and document variants, read:
 
-**`references/design-tokens.md`** — This is the comprehensive reference for artifact/component work. Load it before writing any styled code.
+**`references/design-tokens.md`** — Load it before writing styled React, HTML, dashboard, deck, PDF, or document output.
 
 ---
 
@@ -69,9 +65,9 @@ For the complete design system including all colour values, typography scale, co
 
 | Name | Hex | Role |
 |------|-----|------|
-| Mid Grey | `#888888` | Section titles, secondary accent, chart secondary lines |
-| Grey | `#555555` | Borders, dividers, tertiary text |
-| Faint Grey | `#2A2A2A` | Subtle borders, barely-visible structure |
+| Secondary | `#ACA69B` | Section titles, mono captions, chart secondary lines |
+| Muted | `#918B80` | Body-size de-emphasis only |
+| Faint Grey | `#2A2A2A` | Subtle dividers and barely-visible structure |
 | Red | `#e53935` | Negative / warning / conservative scenario |
 
 ### Colours — Product Accents (sub-pages only)
@@ -119,7 +115,7 @@ border-radius: 8px;
 | Section title | JetBrains Mono, 11px | Bold | uppercase, `1.5px`/`0.34em` |
 | Card title | JetBrains Mono, 11px (or Inter 2xl on marketing pages) | Bold / Medium | uppercase |
 | KPI / stat value | JetBrains Mono, 20–22px (up to 6xl–7xl on hero stats) | 800 / Light | tight |
-| Body | Inter, 12–13px (dashboards) / base–lg (marketing) | Regular | `line-height: 1.55–1.8` |
+| Body | Inter, 14–16px (dashboards) / base–lg (marketing) | Regular | `line-height: 1.55–1.8` |
 
 **Rule:** headlines are light weight, large size, tight/negative tracking. Never bold a headline — gold emphasis lines can go semibold, everything else stays light. This is the single biggest tell of an on-brand vs off-brand build.
 
@@ -169,15 +165,15 @@ Sample lines for calibration:
 3. **Never use** teal, green, or warm secondary colours as general accents. Palette is blacks, whites, greys, and a restrained gold — except the product sub-page accents above, which stay scoped to their own product page only.
 4. **Always use** JetBrains Mono for numeric data, metrics, labels, and badges.
 5. **Always use** Inter for body text and headings.
-6. **Section titles** follow the pattern: uppercase JetBrains Mono + mid-grey `#888888` + bottom border.
+6. **Section titles** follow the pattern: uppercase JetBrains Mono + secondary `#ACA69B` + bottom border.
 7. **KPI values** are always JetBrains Mono, weight 800, sized 20–22px, coloured Gold `#C4A35A` or white `#FFFFFF`.
 8. **Gold is the single general accent.** Use it for one or two key elements per view — not decoration.
-9. **Charts** use: Gold for primary/highlighted data, `#888888` for secondary, `#555555` for tertiary, grey dashed for baselines.
+9. **Charts** use: Gold for primary/highlighted data, `#ACA69B` for secondary, muted/faint grey for tertiary and baselines.
 10. **Headlines are light weight**, never bold. Tight/negative letter-spacing on large type.
 11. **Buttons are pill-shaped.** Primary = gold fill + black text. Secondary = glass/transparent + mono uppercase label.
 12. **Team or people photography** renders in greyscale, never colour.
 13. **Max content width** is 1100–1200px, centred (dashboards); `max-w-6xl` (marketing).
-14. **Footer** on every artifact: monospace, 10px, colour `#333`, centred, includes document name and date.
+14. **Footer** on every artifact: monospace, subtle grey, centred, includes document name and date.
 15. **Copy follows the tone-of-voice section above** — direct, NZ English, zero em dashes, no corporate padding.
 
 ---
