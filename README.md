@@ -22,6 +22,14 @@ After install: restart Claude Code and edit `~/.claude/CLAUDE.md` to personalise
 - **Hooks** — auto-format on Edit/Write, bash command audit log, Next.js image cache clear
 - **Templates** — sanitised `CLAUDE.md` and `settings.json` you can personalise
 
+## What is not here
+
+Skills paired with an Engine AI service offering and its runbook live in
+[`engineai-nz/engine-ai-os`](https://github.com/engineai-nz/engine-ai-os) under `Skills/`, where
+`lifecycle_audit --strict` enforces the Offer → Service → Playbook → Runbook → Skill chain in CI.
+That includes `project-workflow` and `engineai-demo-package`. This repo holds general-purpose
+tooling only.
+
 ## Skills-only install
 
 Drop any skill folder into `~/.claude/skills/` to use it individually. See the category tables below.
