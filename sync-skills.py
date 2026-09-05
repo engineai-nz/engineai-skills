@@ -36,15 +36,21 @@ SKILLS = {
     # Review
     "adversarial-review": "review",
     "code-combat": "review",
-    # Engine AI delivery
+    # Engine AI delivery / general-purpose operator skills (standalone at repo root)
+    "autonomous-development-environment": None,
     "brand": None,
     "humaniser": None,
+    "project-sweep": None,
+    "solution-template-factory": None,
     # June 2026: personal/session/meta/infra skills moved to benduchateau/dotclaude.
     # This repo holds Engine AI product skills only.
     # July 2026: runbook-paired skills (engineai-demo-package, project-workflow) live in
     # engineai-nz/engine-ai-os under Skills/, where lifecycle_audit --strict enforces the
     # Offer->Service->Playbook->Runbook->Skill chain. Syncing them from a laptop let a
     # stale copy overwrite canon. Do not re-add them here.
+    # Sep 2026: project-sweep, solution-template-factory, and autonomous-development-environment
+    # are general-purpose operator skills (not Offer-chain). They live here as standalone
+    # roots, same as brand/humaniser. Offer-chain runbook skills stay in engine-ai-os.
 }
 
 SKIP_FILES = {".DS_Store", "Zone.Identifier", "Thumbs.db", "__pycache__"}
