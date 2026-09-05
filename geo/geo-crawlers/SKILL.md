@@ -1,6 +1,7 @@
 ---
 name: geo-crawlers
-description: AI crawler access analysis. Checks robots.txt, meta tags, and HTTP headers to determine which AI crawlers can access the site. Provides a complete access map and recommendations for maximizing AI visibility while maintaining appropriate control.
+description: Use when /geo crawlers is invoked. Loaded by the geo skill, not by default.
+disable-model-invocation: true
 allowed-tools:
   - Read
   - Grep
