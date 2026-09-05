@@ -1,6 +1,7 @@
 ---
 name: geo-report
-description: Generate a professional, client-facing GEO report combining all audit results into a single deliverable with scores, findings, and prioritized actions
+description: Use when /geo report is invoked. Loaded by the geo skill, not by default.
+disable-model-invocation: true
 version: 1.0.0
 author: geo-seo-claude
 tags: [geo, report, client-deliverable, executive-summary, action-plan]
