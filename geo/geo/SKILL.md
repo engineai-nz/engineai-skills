@@ -1,16 +1,6 @@
 ---
 name: geo
-description: >
-  GEO-first SEO analysis tool. Optimizes websites for AI-powered search engines
-  (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) while maintaining
-  traditional SEO foundations. Performs full GEO audits, citability scoring,
-  AI crawler analysis, llms.txt generation, brand mention scanning, platform-specific
-  optimization, schema markup, technical SEO, content quality (E-E-A-T), and
-  client-ready GEO report generation. Use when the user says "geo", "seo audit",
-  "geo audit", "AI search", "AI visibility", "citability", "llms.txt",
-  "brand mentions", or "GEO report", or explicitly asks to analyse a website's
-  search or AI visibility. Do NOT trigger on bare "audit", "optimize", "schema",
-  or a URL pasted without a search/visibility request.
+description: Use when asked to run a GEO or AI-search visibility audit, report, or llms.txt check. Route subcommands from the table below. Do not load sibling geo-* skills unless that command is in play.
 allowed-tools: Read, Grep, Glob, Bash, WebFetch, Write
 ---
 
