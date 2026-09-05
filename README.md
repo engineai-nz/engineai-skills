@@ -96,12 +96,15 @@ Skills about skills.
 
 | Skill | What it does |
 |---|---|
+| `autonomous-development-environment` | Audit and raise a workstation or agent runtime toward fully autonomous development |
 | `brainstorming` | Pre-build exploration of intent, requirements, and design before implementation |
 | `brand` | Engine AI visual identity: colours, typography, spacing, components, tone of voice |
 | `file-organizer` | Intelligent file/folder organisation with duplicate detection |
 | `humaniser` | Strip AI writing patterns, apply natural direct voice |
 | `notebooklm` | Query Google NotebookLM for source-grounded, citation-backed answers |
+| `project-sweep` | Astra-ready project audit-and-implementation prompt from a repo, Linear project, URL, or client name |
 | `senior-architect` | System architecture design with diagrams for React, Node, Postgres, Go, Python |
+| `solution-template-factory` | Turn a solution category or client problem into a reusable template, then scaffold the first client build |
 | `Stellar-Immigration-Agent-Skill` | NZ immigration process for recruiting Filipino skilled workers (AEWV) |
 
 ---
