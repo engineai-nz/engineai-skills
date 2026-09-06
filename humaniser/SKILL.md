@@ -1,14 +1,6 @@
 ---
 name: humaniser
-description: >
-  Humanise professional writing by stripping AI-generated patterns and applying a natural,
-  direct voice. Use this skill whenever someone says "humanise this", "run the humaniser",
-  "make this sound human", "strip the AI", "clean this up", "does this sound AI",
-  or any variation of asking to remove AI-sounding language from text. Also trigger when
-  reviewing drafted RFP responses, SOWs, proposals, client emails, internal pitch documents,
-  or business cases and the user wants the output to not read like a machine wrote it.
-  Even casual mentions like "this sounds too AI" or "can you make this less robotic"
-  should trigger this skill.
+description: Use when asked to humanise prose or strip AI-sounding language. Not for ordinary drafting unless that is the request.
 ---
 
 # Humaniser

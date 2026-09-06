@@ -1,6 +1,7 @@
 ---
 name: geo-brand-mentions
-description: Brand mention and authority scanner for AI visibility. Analyzes brand presence across platforms that AI models rely on for entity recognition and citation decisions. Produces a Brand Authority Score (0-100) with platform-specific recommendations.
+description: Use when /geo brands is invoked. Loaded by the geo skill, not by default.
+disable-model-invocation: true
 allowed-tools:
   - Read
   - Grep
@@ -185,7 +186,7 @@ These platforms have lower but still meaningful correlation with AI visibility:
 ### Scoring Formula
 
 | Platform | Weight | Rationale |
-|---|---|---|
+|---|---|
 | YouTube Presence | 25% | Strongest correlation with AI citation (0.737) |
 | Reddit Presence | 25% | Second strongest correlation; critical for product recommendations |
 | Wikipedia / Wikidata | 20% | Entity recognition foundation; AI training data cornerstone |

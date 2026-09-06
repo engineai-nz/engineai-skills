@@ -1,6 +1,7 @@
 ---
 name: geo-audit
-description: Full website GEO+SEO audit with parallel subagent delegation. Orchestrates a comprehensive Generative Engine Optimization audit across AI citability, platform analysis, technical infrastructure, content quality, and schema markup. Produces a composite GEO Score (0-100) with prioritized action plan.
+description: Use when /geo audit is invoked. Loaded by the geo skill, not by default.
+disable-model-invocation: true
 allowed-tools:
   - Read
   - Grep
@@ -123,7 +124,7 @@ Delegate analysis to 5 specialized subagents. Each subagent operates on the coll
 The overall GEO Score (0-100) is a weighted average of six category scores:
 
 | Category | Weight | What It Measures |
-|---|---|---|
+|---|---|
 | **AI Citability** | 25% | How quotable/extractable content is for AI systems |
 | **Brand Authority** | 20% | Third-party mentions, entity recognition signals |
 | **Content E-E-A-T** | 20% | Experience, Expertise, Authoritativeness, Trustworthiness |

@@ -1,6 +1,7 @@
 ---
 name: geo-llmstxt
-description: Analyzes and generates llms.txt files -- the emerging standard for helping AI systems understand website structure and content. Can validate existing llms.txt files or generate new ones from scratch by crawling the site.
+description: Use when /geo llmstxt is invoked. Loaded by the geo skill, not by default.
+disable-model-invocation: true
 allowed-tools:
   - Read
   - Grep

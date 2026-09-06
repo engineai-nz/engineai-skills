@@ -1,15 +1,6 @@
 ---
 name: brand
-description: >
-  Engine AI / The Agent Maestros brand identity, design system, visual language, and tone of
-  voice. Use when building visual or written artifacts for Engine AI, The Agent Maestros,
-  Ben du Chateau, Joe Ward, or related client/internal work: React artifacts, HTML pages,
-  dashboards, landing pages, decks, proposals, financial models, lean canvases, client
-  deliverables, internal tools, copy, and tone-of-voice edits. Trigger on "Engine AI",
-  "Agent Maestros", "maestros brand", "maestros style", "engine ai brand", "use our brand",
-  "use the dark theme", "same look as the financial model", "brand guidelines", "design
-  system", or "our style" in this context. Apply by default to Engine AI / Agent Maestros
-  visual output.
+description: Use when building or restyling Engine AI / Agent Maestros visual artifacts, or when asked for brand, tokens, or tone of voice. Not for unrelated product work.
 ---
 
 # The Agent Maestros / Engine AI — Brand & Design System
@@ -20,9 +11,7 @@ description: >
 
 ## When to Use
 
-Apply this design system to **every** visual artifact built for The Agent Maestros or Engine AI. This includes dashboards, financial models, lean canvases, project trackers, client-facing tools, landing pages, pitch decks (React/HTML), and internal operator tools.
-
-If you're building a React `.jsx` artifact or an `.html` page — use this system. No exceptions.
+Use this system for Engine AI / Agent Maestros visual artifacts (dashboards, decks, landing pages, operator tools). Load `references/design-tokens.md` before writing styled output.
 
 For Word documents (`.docx`) and PDFs, use the colour palette but follow standard document conventions (white background, dark text, Navy/Gold/Grey accents) — see the Word Document Variant in `references/design-tokens.md`.
 

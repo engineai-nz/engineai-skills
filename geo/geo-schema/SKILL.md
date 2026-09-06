@@ -1,6 +1,7 @@
 ---
 name: geo-schema
-description: Schema.org structured data audit and generation optimized for AI discoverability — detect, validate, and generate JSON-LD markup
+description: Use when /geo schema is invoked. Loaded by the geo skill, not by default.
+disable-model-invocation: true
 version: 1.0.0
 author: geo-seo-claude
 tags: [geo, schema, structured-data, json-ld, entity-recognition, ai-discoverability]
