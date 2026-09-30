@@ -107,7 +107,7 @@ def fingerprint(files):
 def committed_snapshot(repo, relative, revision=None):
     """Read every source byte/mode from a commit tree, regardless of index flags."""
     def git(*args):
-        return subprocess.run(["git", "-C", str(repo), *args],
+        return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), *args],
                               capture_output=True, check=True).stdout
     if revision is None:
         revision = git("rev-parse", "HEAD").decode("ascii").strip()

@@ -29,7 +29,8 @@ python3 sync-skills.py --skill brand --live-dir "$HOME/.claude/skills"
 The repository source comes from immutable Git tree/blob bytes and executable
 modes, rather than the working tree or index. The report records the resolved
 commit SHA. Ignored files, untracked files, working-tree edits and index flags
-such as `assume-unchanged` cannot silently become repository source. No remote is
+such as `assume-unchanged` cannot silently become repository source. Object reads
+use `git --no-replace-objects`, so local replacement refs cannot spoof the recorded SHA. No remote is
 fetched; local HEAD does not prove freshness or review approval.
 
 To inspect a particular reviewed commit, supply its full SHA:

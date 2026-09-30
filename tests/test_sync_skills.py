@@ -116,6 +116,26 @@ class SyncSafetyTests(unittest.TestCase):
                 _, committed = sync.committed_snapshot(self.repo, 'brand', self.revision)
                 self.assertEqual(committed['SKILL.md'][0], b'reviewed canon\n')
 
+    def test_replacement_commit_tree_and_blob_cannot_spoof_requested_sha(self):
+        original_commit = self.revision
+        original_tree = self.git('rev-parse', original_commit + '^{tree}')
+        original_blob = self.git('rev-parse', original_commit + ':brand/SKILL.md')
+        (self.source / 'SKILL.md').write_text('replacement unreviewed doctrine')
+        self.git('add', 'brand/SKILL.md')
+        self.git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+                 'commit', '-qm', 'replacement fixture')
+        new_commit = self.git('rev-parse', 'HEAD')
+        new_tree = self.git('rev-parse', 'HEAD^{tree}')
+        new_blob = self.git('rev-parse', 'HEAD:brand/SKILL.md')
+        for original, replacement in [(original_commit, new_commit), (original_tree, new_tree),
+                                      (original_blob, new_blob)]:
+            with self.subTest(object=original):
+                self.git('replace', original, replacement)
+                sha, committed = sync.committed_snapshot(self.repo, 'brand', original_commit)
+                self.assertEqual(sha, original_commit)
+                self.assertEqual(committed['SKILL.md'][0], b'reviewed canon\n')
+                self.git('replace', '-d', original)
+
     def test_source_changes_during_git_read_still_return_committed_blobs(self):
         original = subprocess.run
         def edit_worktree(*args, **kwargs):
