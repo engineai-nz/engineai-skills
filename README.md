@@ -1,136 +1,106 @@
-# Engine AI Claude Skills
+# Engine AI skills
 
-Engine AI's shared Claude Code setup — skills, statusline, hooks, scripts, and settings templates. Used by the Engine AI team to keep their Claude Code environments consistent.
+This repository contains Engine AI product and operator skills. Joe’s shared
+engineering and delivery policy belongs to
+[Joe’s Engineering Playbook](https://github.com/engineai-nz/joes-engineering-playbook).
+Offering/runbook skills belong to
+[engine-ai-os](https://github.com/engineai-nz/engine-ai-os), including
+`project-workflow` and `engineai-demo-package`. Pstack and Matt Pocock skills keep
+their existing upstream owners and installations; this tool does not manage them.
 
-## Quick install (full setup)
+There is no full-environment installer in this repository. Skills, account
+instructions, hooks, security settings and schedulers have different owners;
+copying one does not establish a working runtime or authorize a product build.
 
-```bash
-git clone https://github.com/engineai-nz/engineai-skills.git ~/engineai-dotclaude
-cd ~/engineai-dotclaude
-./install.sh
+## Inspect drift first
+
+`sync-skills.py` replaces the former laptop-to-main publisher. It never stages,
+commits, pushes, removes destination extras or edits account configuration.
+Every invocation names one skill from the repository allowlist. Missing sources,
+symlinks and unsupported paths fail closed. With no `--apply`, it only reports
+file drift and fingerprints, without creating backups or directories:
+
+```sh
+python3 sync-skills.py --skill brand --live-dir "$HOME/.claude/skills"
 ```
 
-The installer copies skills into `~/.claude/skills/`, scripts into `~/.claude/scripts/`, hooks into `~/.claude/hooks/`, and drops in `CLAUDE.md` + `settings.json` templates. Existing files are backed up to `~/.claude/backups/dotclaude-<timestamp>/`.
+The default direction is repository to installation. Local custom changes remain
+intact. `preserved_extras` lists destination files absent from the source; they
+are never treated as deletion requests. Volatile caches and dependency folders
+are excluded from drift comparison.
 
-After install: restart Claude Code and edit `~/.claude/CLAUDE.md` to personalise.
+To propose a local improvement, request a named review diff:
 
-## What's included
-
-- **Skills** — GEO suite, session lifecycle, review, infra, standalone (see below)
-- **Statusline** — Engine AI gold branded Python statusline with model, context %, duration, project, git branch, rate limits
-- **Scripts** — session hooks (home hygiene, git status across projects, wiki sync check, wrap reminder)
-- **Hooks** — auto-format on Edit/Write, bash command audit log, Next.js image cache clear
-- **Templates** — sanitised `CLAUDE.md` and `settings.json` you can personalise
-
-## What is not here
-
-Skills paired with an Engine AI service offering and its runbook live in
-[`engineai-nz/engine-ai-os`](https://github.com/engineai-nz/engine-ai-os) under `Skills/`, where
-`lifecycle_audit --strict` enforces the Offer → Service → Playbook → Runbook → Skill chain in CI.
-That includes `project-workflow` and `engineai-demo-package`. This repo holds general-purpose
-tooling only.
-
-## Skills-only install
-
-Drop any skill folder into `~/.claude/skills/` to use it individually. See the category tables below.
-
----
-
-## GEO -- Generative Engine Optimisation
-
-Full suite for optimising websites for AI-powered search engines (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews).
-
-| Skill | What it does |
-|---|---|
-| `geo/geo` | Core GEO analysis with citability scoring, crawler checks, and schema audit |
-| `geo/geo-audit` | Full website audit with parallel subagent delegation across all GEO dimensions |
-| `geo/geo-brand-mentions` | Brand mention and authority scanning across AI-referenced platforms |
-| `geo/geo-citability` | Score how likely AI systems are to cite or quote page content (0-100) |
-| `geo/geo-compare` | Monthly delta tracking between baseline and current GEO audits |
-| `geo/geo-content` | Content quality and E-E-A-T assessment for AI citability |
-| `geo/geo-crawlers` | AI crawler access analysis via robots.txt, meta tags, and HTTP headers |
-| `geo/geo-llmstxt` | Generate and validate llms.txt files for AI system discoverability |
-| `geo/geo-platform-optimizer` | Platform-specific optimisation for individual AI search engines |
-| `geo/geo-proposal` | Auto-generate client-ready GEO service proposals from audit data |
-| `geo/geo-prospect` | CRM-lite for managing GEO prospects through the sales pipeline |
-| `geo/geo-report` | Professional client-facing report combining all audit results |
-| `geo/geo-report-pdf` | PDF report generation with score gauges, charts, and action plans |
-| `geo/geo-schema` | Schema.org structured data audit and JSON-LD generation |
-| `geo/geo-technical` | Technical SEO audit with GEO-specific crawlability and SSR checks |
-
-## Session
-
-Session lifecycle management for Claude Code.
-
-| Skill | What it does |
-|---|---|
-| `session/load-project` | Guided walkthrough for opening a project and getting it running locally |
-| `session/resume` | Start-of-session briefing: memory, git state, next actions |
-| `session/resume-deep` | Comprehensive briefing with full memory review and cross-project scan |
-| `session/wrap` | End-of-session cleanup: update todos, lessons, decisions, check for stray files |
-
-## Review
-
-| Skill | What it does |
-|---|---|
-| `review/adversarial-review` | Dual-agent adversarial review of PRDs, specs, and architecture docs |
-| `review/code-combat` | Multi-round adversarial negotiation between AI agents over build docs |
-
-## Meta
-
-Skills about skills.
-
-| Skill | What it does |
-|---|---|
-| `meta/autoresearch` | Autonomously optimise skills by running, scoring, and mutating prompts |
-| `meta/skill-creator` | Guide for creating and packaging new Claude Code skills |
-
-## Infrastructure
-
-| Skill | What it does |
-|---|---|
-| `infra/openclaw-audit` | Audit OpenClaw VM against security, health, Docker, and app standards |
-| `infra/unraid-troubleshooter` | Unraid server diagnostics: array, parity, Docker, VMs, plugins |
-
-## Standalone Skills
-
-| Skill | What it does |
-|---|---|
-| `autonomous-development-environment` | Audit and raise a workstation or agent runtime toward fully autonomous development |
-| `brainstorming` | Pre-build exploration of intent, requirements, and design before implementation |
-| `brand` | Engine AI visual identity: colours, typography, spacing, components, tone of voice |
-| `file-organizer` | Intelligent file/folder organisation with duplicate detection |
-| `humaniser` | Strip AI writing patterns, apply natural direct voice |
-| `notebooklm` | Query Google NotebookLM for source-grounded, citation-backed answers |
-| `project-sweep` | Astra-ready project audit-and-implementation prompt from a repo, Linear project, URL, or client name |
-| `senior-architect` | System architecture design with diagrams for React, Node, Postgres, Go, Python |
-| `solution-template-factory` | Turn a solution category or client problem into a reusable template, then scaffold the first client build |
-| `Stellar-Immigration-Agent-Skill` | NZ immigration process for recruiting Filipino skilled workers (AEWV) |
-
----
-
-## Installation
-
-Full setup (recommended): `./install.sh` — see top of this README.
-
-Single skill, manual: `cp -r geo/geo-audit ~/.claude/skills/geo-audit`
-
-## Config bundle layout
-
-```
-config/
-├── scripts/       # ~/.claude/scripts/  — statusline.py, session-start hooks
-├── hooks/         # ~/.claude/hooks/    — PostToolUse hooks
-└── templates/     # CLAUDE.md + settings.json starter templates
+```sh
+python3 sync-skills.py --skill brand --live-dir "$HOME/.claude/skills" \
+  --direction local-to-repo
 ```
 
-## Opt-in env vars
+This direction is always read-only. Review the diff for private data and obsolete
+doctrine, then apply any accepted edits on an owned branch through existing PR,
+review and CI gates. It cannot promote local files or push `main`.
 
-| Var | What it does |
-|---|---|
-| `OPENCLAW_HOST` | If set (e.g. `user@10.0.0.2`), session-start hook pings an OpenClaw server over SSH. Skipped silently when unset. |
-| `HYGIENE_ALLOWED_DIRS` | Space-separated list of directories expected in `~/`. Defaults to `projects`. |
+## Install an explicitly reviewed revision
 
-## Built by
+After reviewing the exact repository commit and target drift, installation
+requires all of:
 
-[Engine AI](https://engineai.co.nz) -- AI orchestration consultancy, Auckland, New Zealand.
+- The full reviewed commit SHA, matching the checkout’s HEAD. The selected skill
+  must be tracked and free of staged, unstaged and untracked changes.
+- The target fingerprint from the drift report (or `absent` for a new skill).
+- A new backup directory outside both repository and installation trees. Existing
+  backup directories, overlapping trees and symlinked paths are rejected.
+
+For example, replace both placeholders with the values actually reviewed:
+
+```sh
+python3 sync-skills.py --skill brand --live-dir "$HOME/.claude/skills" --apply \
+  --source-revision '<full-reviewed-commit-sha>' \
+  --expect-target '<target-fingerprint-from-drift-report>' \
+  --backup-dir '<new-external-backup-directory>'
+```
+
+There is no default approved SHA, automatic update, model preference change or
+scheduler. Unrelated dirty repository files are untouched. Source changes during
+installation invalidate the operation. Destination writes replace each file
+atomically. Changed target files block overwrites. A failed copy restores files
+written by this invocation when they still match its installed content; competing
+edits are retained and marked `rollback-conflict`.
+
+A successful install emits the backup location and new target fingerprint. An
+already aligned target is a no-op and needs no new backup. Restart or explicitly
+reload the consuming harness and verify the skill appears in its actual catalogue;
+filesystem presence is not loading evidence.
+
+## Recovery and validation
+
+The backup contains `original/` for a pre-existing target plus `receipt.json`,
+which records the source revision, before fingerprint, changed/created file names
+and result. Keep backups private; local skills can contain private references.
+
+For manual rollback, stop competing edits, compare current files with the reviewed
+installed source, restore only receipt-listed changed files from `original/`
+with their modes, and remove only receipt-listed newly created files after
+confirming they are still this installation’s content. Preserve all destination
+extras and later local edits. If the receipt says `rollback-conflict`, inspect
+those files before restoration. Do not blindly replace the whole installation.
+
+Fixture tests use disposable repositories and installations, with no network:
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
+They cover stale local doctrine, unrelated dirty work, absent sources, no
+implicit deletion, repeated installs, reviewed revision and fingerprint checks,
+path traversal, symlinks, backup overlap, source changes during installation and
+mid-copy recovery. Passing fixtures prove these code paths; they do not prove
+that any live Mac installation or scheduler was exercised.
+
+## Included skills
+
+The allowlist in `sync-skills.py` defines the managed subset: the GEO suite under
+`geo/`, review skills under `review/`, and named standalone operator skills.
+Other content in this repository is not automatically installed. Existing PR
+holds, including the human skim on PR #6 and draft AI-news cron PR #1, remain
+binding; this tool neither activates them nor releases those holds.
