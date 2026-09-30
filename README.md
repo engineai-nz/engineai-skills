@@ -1,136 +1,93 @@
-# Engine AI Claude Skills
+# Engine AI skills
 
-Engine AI's shared Claude Code setup — skills, statusline, hooks, scripts, and settings templates. Used by the Engine AI team to keep their Claude Code environments consistent.
+This repository contains Engine AI product and operator skills. Joe’s shared
+engineering and delivery policy belongs to
+[Joe’s Engineering Playbook](https://github.com/engineai-nz/joes-engineering-playbook).
+Offering/runbook skills belong to
+[engine-ai-os](https://github.com/engineai-nz/engine-ai-os), including
+`project-workflow` and `engineai-demo-package`. Pstack and Matt Pocock skills keep
+their existing upstream owners and installations; this tool does not manage them.
 
-## Quick install (full setup)
+There is no full-environment installer in this repository. Skills, account
+instructions, hooks, security settings and schedulers have different owners.
+Filesystem presence does not prove that a harness loaded a skill.
 
-```bash
-git clone https://github.com/engineai-nz/engineai-skills.git ~/engineai-dotclaude
-cd ~/engineai-dotclaude
-./install.sh
+## Verified drift and proposal tool
+
+`sync-skills.py` is read-only. It replaces the former laptop-to-main publisher
+without installing files, deleting destination extras, staging, committing or
+pushing. Every invocation names one skill from the repository allowlist.
+`--apply` always returns a blocked result, even with a revision, fingerprint and
+backup path. No installation or backup write occurs.
+
+Compare one installed skill with the committed repository version:
+
+```sh
+python3 sync-skills.py --skill brand --live-dir "$HOME/.claude/skills"
 ```
 
-The installer copies skills into `~/.claude/skills/`, scripts into `~/.claude/scripts/`, hooks into `~/.claude/hooks/`, and drops in `CLAUDE.md` + `settings.json` templates. Existing files are backed up to `~/.claude/backups/dotclaude-<timestamp>/`.
+The repository source comes from immutable Git tree/blob bytes and executable
+modes, rather than the working tree or index. The report records the resolved
+commit SHA. Ignored files, untracked files, working-tree edits and index flags
+such as `assume-unchanged` cannot silently become repository source. Object reads
+use `git --no-replace-objects`, so local replacement refs cannot spoof the recorded SHA. No remote is
+fetched; local HEAD does not prove freshness or review approval.
 
-After install: restart Claude Code and edit `~/.claude/CLAUDE.md` to personalise.
+To inspect a particular reviewed commit, supply its full SHA:
 
-## What's included
-
-- **Skills** — GEO suite, session lifecycle, review, infra, standalone (see below)
-- **Statusline** — Engine AI gold branded Python statusline with model, context %, duration, project, git branch, rate limits
-- **Scripts** — session hooks (home hygiene, git status across projects, wiki sync check, wrap reminder)
-- **Hooks** — auto-format on Edit/Write, bash command audit log, Next.js image cache clear
-- **Templates** — sanitised `CLAUDE.md` and `settings.json` you can personalise
-
-## What is not here
-
-Skills paired with an Engine AI service offering and its runbook live in
-[`engineai-nz/engine-ai-os`](https://github.com/engineai-nz/engine-ai-os) under `Skills/`, where
-`lifecycle_audit --strict` enforces the Offer → Service → Playbook → Runbook → Skill chain in CI.
-That includes `project-workflow` and `engineai-demo-package`. This repo holds general-purpose
-tooling only.
-
-## Skills-only install
-
-Drop any skill folder into `~/.claude/skills/` to use it individually. See the category tables below.
-
----
-
-## GEO -- Generative Engine Optimisation
-
-Full suite for optimising websites for AI-powered search engines (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews).
-
-| Skill | What it does |
-|---|---|
-| `geo/geo` | Core GEO analysis with citability scoring, crawler checks, and schema audit |
-| `geo/geo-audit` | Full website audit with parallel subagent delegation across all GEO dimensions |
-| `geo/geo-brand-mentions` | Brand mention and authority scanning across AI-referenced platforms |
-| `geo/geo-citability` | Score how likely AI systems are to cite or quote page content (0-100) |
-| `geo/geo-compare` | Monthly delta tracking between baseline and current GEO audits |
-| `geo/geo-content` | Content quality and E-E-A-T assessment for AI citability |
-| `geo/geo-crawlers` | AI crawler access analysis via robots.txt, meta tags, and HTTP headers |
-| `geo/geo-llmstxt` | Generate and validate llms.txt files for AI system discoverability |
-| `geo/geo-platform-optimizer` | Platform-specific optimisation for individual AI search engines |
-| `geo/geo-proposal` | Auto-generate client-ready GEO service proposals from audit data |
-| `geo/geo-prospect` | CRM-lite for managing GEO prospects through the sales pipeline |
-| `geo/geo-report` | Professional client-facing report combining all audit results |
-| `geo/geo-report-pdf` | PDF report generation with score gauges, charts, and action plans |
-| `geo/geo-schema` | Schema.org structured data audit and JSON-LD generation |
-| `geo/geo-technical` | Technical SEO audit with GEO-specific crawlability and SSR checks |
-
-## Session
-
-Session lifecycle management for Claude Code.
-
-| Skill | What it does |
-|---|---|
-| `session/load-project` | Guided walkthrough for opening a project and getting it running locally |
-| `session/resume` | Start-of-session briefing: memory, git state, next actions |
-| `session/resume-deep` | Comprehensive briefing with full memory review and cross-project scan |
-| `session/wrap` | End-of-session cleanup: update todos, lessons, decisions, check for stray files |
-
-## Review
-
-| Skill | What it does |
-|---|---|
-| `review/adversarial-review` | Dual-agent adversarial review of PRDs, specs, and architecture docs |
-| `review/code-combat` | Multi-round adversarial negotiation between AI agents over build docs |
-
-## Meta
-
-Skills about skills.
-
-| Skill | What it does |
-|---|---|
-| `meta/autoresearch` | Autonomously optimise skills by running, scoring, and mutating prompts |
-| `meta/skill-creator` | Guide for creating and packaging new Claude Code skills |
-
-## Infrastructure
-
-| Skill | What it does |
-|---|---|
-| `infra/openclaw-audit` | Audit OpenClaw VM against security, health, Docker, and app standards |
-| `infra/unraid-troubleshooter` | Unraid server diagnostics: array, parity, Docker, VMs, plugins |
-
-## Standalone Skills
-
-| Skill | What it does |
-|---|---|
-| `autonomous-development-environment` | Audit and raise a workstation or agent runtime toward fully autonomous development |
-| `brainstorming` | Pre-build exploration of intent, requirements, and design before implementation |
-| `brand` | Engine AI visual identity: colours, typography, spacing, components, tone of voice |
-| `file-organizer` | Intelligent file/folder organisation with duplicate detection |
-| `humaniser` | Strip AI writing patterns, apply natural direct voice |
-| `notebooklm` | Query Google NotebookLM for source-grounded, citation-backed answers |
-| `project-sweep` | Astra-ready project audit-and-implementation prompt from a repo, Linear project, URL, or client name |
-| `senior-architect` | System architecture design with diagrams for React, Node, Postgres, Go, Python |
-| `solution-template-factory` | Turn a solution category or client problem into a reusable template, then scaffold the first client build |
-| `Stellar-Immigration-Agent-Skill` | NZ immigration process for recruiting Filipino skilled workers (AEWV) |
-
----
-
-## Installation
-
-Full setup (recommended): `./install.sh` — see top of this README.
-
-Single skill, manual: `cp -r geo/geo-audit ~/.claude/skills/geo-audit`
-
-## Config bundle layout
-
-```
-config/
-├── scripts/       # ~/.claude/scripts/  — statusline.py, session-start hooks
-├── hooks/         # ~/.claude/hooks/    — PostToolUse hooks
-└── templates/     # CLAUDE.md + settings.json starter templates
+```sh
+python3 sync-skills.py --skill brand --live-dir "$HOME/.claude/skills" \
+  --source-revision '<full-reviewed-commit-sha>'
 ```
 
-## Opt-in env vars
+Missing source entries, symlinks and unsupported paths fail closed.
+`preserved_extras` reports destination files absent from the source, never a
+deletion request. Volatile caches and dependency folders are excluded. Local
+fingerprints are observations, not locks or transaction guarantees; coordinate
+custody and repeat inspection if another owner is editing the files.
 
-| Var | What it does |
-|---|---|
-| `OPENCLAW_HOST` | If set (e.g. `user@10.0.0.2`), session-start hook pings an OpenClaw server over SSH. Skipped silently when unset. |
-| `HYGIENE_ALLOWED_DIRS` | Space-separated list of directories expected in `~/`. Defaults to `projects`. |
+To propose a local improvement, request a named review diff:
 
-## Built by
+```sh
+python3 sync-skills.py --skill brand --live-dir "$HOME/.claude/skills" \
+  --direction local-to-repo --source-revision '<full-reviewed-commit-sha>'
+```
 
-[Engine AI](https://engineai.co.nz) -- AI orchestration consultancy, Auckland, New Zealand.
+Review that diff for private data and obsolete doctrine. Apply any accepted
+repository edits on an owned branch through the existing PR, review and CI gates.
+This command cannot promote local files or push `main`.
+
+## Installation boundary
+
+A generic installer remains deferred. A supported installation route must prove
+source authenticity, exclusive target custody, no-follow filesystem traversal,
+protection against intervening custom edits, and durable receipt/recovery through
+finalization. A path check followed by replacement does not establish those
+properties. This repository adds no installer infrastructure or scheduler.
+
+Bounded direct alignment of named instruction files can still use existing
+filesystem tools, reviewed canonical text, backups and immediate conflict checks
+under the user’s authority. That is separate from a generic transactional install
+claim. Existing security gates, dirty work and explicit pauses remain binding.
+There is no rollback procedure for this tool because it performs no writes.
+
+## Validation
+
+Fixture tests use disposable repositories and local observations, with no network:
+
+```sh
+python3 -B -m unittest discover -s tests -v
+```
+
+They cover stale local doctrine, unrelated staged/unstaged work, ignored private
+files, index flags, missing sources, repeated reports, revision validation, path
+traversal, symlinks, source changes during Git reads and no-mutation apply refusal.
+The no-write boundary prevents the former concurrent-edit, parent-swap and final
+receipt failure paths from being entered. These tests do not prove an installer,
+a live harness load or an unattended wake path.
+
+## Included skills
+
+The allowlist in `sync-skills.py` defines the reported subset: the GEO suite under
+`geo/`, review skills under `review/`, and named standalone operator skills.
+Other repository content is not automatically installed or inspected.
