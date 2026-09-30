@@ -57,18 +57,22 @@ class SyncSafetyTests(unittest.TestCase):
                             expected or sync.fingerprint(sync.snapshot(self.target)),
                             backup or self.backup)
 
-    def test_default_stale_local_is_read_only_and_never_stages_unrelated_dirty_work(self):
+    def test_default_stale_local_is_read_only_and_preserves_dirty_index(self):
         self.local()
-        (self.repo / 'notes.txt').write_text('unrelated dirty work')
-        before_repo = sync.snapshot(self.repo)
-        before_local = sync.snapshot(self.live)
-        status = self.git('status', '--porcelain')
+        (self.repo / 'notes.txt').write_text('unrelated staged work')
+        self.git('add', 'notes.txt')
+        (self.repo / 'dirty.txt').write_text('unrelated unstaged work')
+        before_repo, before_local = sync.snapshot(self.repo), sync.snapshot(self.live)
+        status, staged = self.git('status', '--porcelain'), self.git('diff', '--cached')
         code, report = self.run_cli()
         self.assertEqual(code, 0)
         self.assertEqual(report['result'], 'drift')
+        self.assertFalse(report['installation_available'])
+        self.assertEqual(report['repository_commit'], self.revision)
         self.assertEqual(sync.snapshot(self.repo), before_repo)
         self.assertEqual(sync.snapshot(self.live), before_local)
         self.assertEqual(self.git('status', '--porcelain'), status)
+        self.assertEqual(self.git('diff', '--cached'), staged)
         self.assertFalse(self.backup.exists())
 
     def test_local_to_canon_only_proposes_named_diff(self):
@@ -83,28 +87,54 @@ class SyncSafetyTests(unittest.TestCase):
         self.assertEqual(sync.snapshot(self.repo), before)
 
     def test_install_requires_reviewed_full_sha(self):
-        with self.assertRaises(sync.Conflict):
-            sync.install(self.repo, self.source, self.target, 'brand', None, 'absent', self.backup)
-        with self.assertRaises(sync.Conflict):
-            sync.install(self.repo, self.source, self.target, 'brand', 'f' * 40, 'absent', self.backup)
+        # Retain the fixture's entrypoint name for independent baseline repros.
+        # No SHA, fingerprint or backup path enables application.
+        for revision in [None, self.revision, 'f' * 40]:
+            with self.assertRaises(sync.Conflict):
+                sync.install(self.repo, self.source, self.target, 'brand', revision, 'absent', self.backup)
         self.assertFalse(self.target.exists())
 
-    def test_fingerprint_conflict_preserves_custom_work(self):
-        self.local()
-        before = sync.snapshot(self.target)
-        with self.assertRaises(sync.Conflict):
-            self.apply('absent')
-        self.assertEqual(sync.snapshot(self.target), before)
-        self.assertFalse(self.backup.exists())
+    def test_git_source_excludes_ignored_private_and_untracked_files(self):
+        (self.repo / '.gitignore').write_text('brand/private.txt\n')
+        self.git('add', '.gitignore')
+        self.git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+                 'commit', '-qm', 'ignore fixture')
+        self.revision = self.git('rev-parse', 'HEAD')
+        (self.source / 'private.txt').write_text('synthetic private data')
+        (self.source / 'untracked.txt').write_text('unreviewed')
+        sha, committed = sync.committed_snapshot(self.repo, 'brand', self.revision)
+        self.assertEqual(sha, self.revision)
+        self.assertNotIn('private.txt', committed)
+        self.assertNotIn('untracked.txt', committed)
+        self.assertFalse(self.target.exists())
 
-    def test_missing_source_never_deletes_target(self):
+    def test_assume_unchanged_and_skip_worktree_cannot_change_committed_source(self):
+        for flag in ['--assume-unchanged', '--skip-worktree']:
+            with self.subTest(flag=flag):
+                self.git('update-index', flag, 'brand/SKILL.md')
+                (self.source / 'SKILL.md').write_text('unreviewed local doctrine')
+                _, committed = sync.committed_snapshot(self.repo, 'brand', self.revision)
+                self.assertEqual(committed['SKILL.md'][0], b'reviewed canon\n')
+
+    def test_source_changes_during_git_read_still_return_committed_blobs(self):
+        original = subprocess.run
+        def edit_worktree(*args, **kwargs):
+            result = original(*args, **kwargs)
+            if 'ls-tree' in args[0]:
+                (self.source / 'SKILL.md').write_text('changed after tree read')
+            return result
+        with patch.object(sync.subprocess, 'run', side_effect=edit_worktree):
+            _, committed = sync.committed_snapshot(self.repo, 'brand', self.revision)
+        self.assertEqual(committed['SKILL.md'][0], b'reviewed canon\n')
+
+    def test_missing_committed_source_never_deletes_target(self):
         self.local()
-        (self.source / 'SKILL.md').unlink()
+        self.git('rm', '-q', 'brand/SKILL.md')
+        self.git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+                 'commit', '-qm', 'missing source fixture')
         before = sync.snapshot(self.target)
         code, _ = self.run_cli()
         self.assertEqual(code, 2)
-        with self.assertRaises(sync.Conflict):
-            self.apply()
         self.assertEqual(sync.snapshot(self.target), before)
 
     def test_missing_local_source_never_deletes_canon(self):
@@ -113,30 +143,20 @@ class SyncSafetyTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertEqual(sync.snapshot(self.repo), before)
 
-    def test_install_backups_extras_and_preserves_unrelated_dirty_files(self):
+    def test_repeated_reports_preserve_extras_and_create_nothing(self):
         self.local()
-        before = sync.snapshot(self.target)
-        (self.repo / 'dirty.txt').write_text('keep')
-        status = self.git('status', '--porcelain')
-        result = self.apply()
-        self.assertEqual(result['result'], 'installed')
-        self.assertEqual(sync.snapshot(self.backup / 'original'), before)
-        self.assertEqual((self.target / 'extra.txt').read_text(), 'keep local custom work\n')
-        self.assertEqual(self.git('status', '--porcelain'), status)
-
-    def test_repeated_install_is_noop_without_new_backup(self):
-        self.apply()
-        second = self.root / 'second-backup'
-        result = self.apply(backup=second)
-        self.assertEqual(result['result'], 'unchanged')
-        self.assertFalse(second.exists())
+        before = sync.snapshot(self.root)
+        first, second = self.run_cli(), self.run_cli()
+        self.assertEqual(first, second)
+        self.assertIn('extra.txt', first[1]['preserved_extras'])
+        self.assertEqual(sync.snapshot(self.root), before)
 
     def test_path_traversal_outside_allowlist_rejected(self):
         for name in ['../brand', '/brand', 'brand/../../outside']:
             with self.assertRaises(sync.Conflict):
                 sync.paths(self.repo, self.live, name)
 
-    def test_symlinked_parent_target_source_and_backup_rejected(self):
+    def test_symlinked_parent_target_and_committed_symlink_rejected(self):
         link = self.root / 'link'
         link.symlink_to(self.live, target_is_directory=True)
         with self.assertRaises(sync.Conflict):
@@ -145,98 +165,69 @@ class SyncSafetyTests(unittest.TestCase):
         with self.assertRaises(sync.Conflict):
             sync.paths(self.repo, self.live, 'brand')
         self.target.unlink()
-        (self.source / 'link.txt').symlink_to(self.source / 'a.txt')
+        (self.source / 'link.txt').symlink_to('a.txt')
+        self.git('add', 'brand/link.txt')
+        self.git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+                 'commit', '-qm', 'symlink fixture')
         with self.assertRaises(sync.Conflict):
-            sync.snapshot(self.source)
-        (self.source / 'link.txt').unlink()
-        self.backup.symlink_to(self.live, target_is_directory=True)
-        with self.assertRaises(sync.Conflict):
-            self.apply()
+            sync.committed_snapshot(self.repo, 'brand')
 
-    def test_backup_overlap_or_existing_backup_rejected(self):
-        for backup in [self.repo / 'backups', self.live / 'backups', self.root,
-                       self.target / 'backup']:
+    def test_apply_calls_no_mutation_or_git_api_even_with_all_options(self):
+        self.local()
+        before = sync.snapshot(self.root)
+        with contextlib.ExitStack() as stack:
+            mocks = [stack.enter_context(patch.object(Path, name)) for name in
+                     ['write_text', 'write_bytes', 'mkdir', 'chmod', 'unlink', 'rmdir', 'rename']]
+            mocks += [stack.enter_context(patch.object(os, 'replace')),
+                      stack.enter_context(patch.object(tempfile, 'mkstemp')),
+                      stack.enter_context(patch.object(sync.subprocess, 'run'))]
+            code, report = self.run_cli('--apply', '--source-revision', self.revision,
+                '--expect-target', sync.fingerprint(sync.snapshot(self.target)),
+                '--backup-dir', str(self.backup))
+            self.assertEqual(code, 2)
+            self.assertIn('read-only', report['reason'])
+            for mock in mocks:
+                mock.assert_not_called()
+        self.assertEqual(sync.snapshot(self.root), before)
+
+    def test_concurrent_edit_and_parent_swap_hooks_are_never_reached(self):
+        self.local()
+        outside = self.root / 'outside'
+        outside.mkdir()
+        (outside / 'a.txt').write_text('outside owner data')
+        before = sync.snapshot(self.root)
+        with patch.object(tempfile, 'mkstemp', side_effect=AssertionError('race boundary reached')) as temp:
+            with patch.object(os, 'replace', side_effect=AssertionError('replace boundary reached')) as replace:
+                with self.assertRaises(sync.Conflict):
+                    self.apply()
+                temp.assert_not_called()
+                replace.assert_not_called()
+        self.assertEqual(sync.snapshot(self.root), before)
+
+    def test_prepared_receipt_untouched_when_apply_is_blocked(self):
+        self.local()
+        self.backup.mkdir()
+        receipt = self.backup / 'receipt.json'
+        receipt.write_text('{"status":"prepared"}')
+        before = sync.snapshot(self.root)
+        with patch.object(Path, 'write_text', side_effect=OSError('fixture full disk')) as write:
+            with self.assertRaises(sync.Conflict):
+                self.apply()
+            write.assert_not_called()
+        self.assertEqual(sync.snapshot(self.root), before)
+
+    def test_backup_overlap_is_never_created_or_written(self):
+        for backup in [self.repo / 'backups', self.live / 'backups', self.root, self.target / 'backup']:
             with self.assertRaises(sync.Conflict):
                 self.apply(backup=backup)
-        self.backup.mkdir()
-        with self.assertRaises(sync.Conflict):
-            self.apply()
         self.assertFalse(self.target.exists())
 
-    def test_dirty_selected_source_rejected(self):
-        (self.source / 'a.txt').write_text('unreviewed change')
-        with self.assertRaises(sync.Conflict):
-            self.apply()
-        self.assertFalse(self.backup.exists())
-
-    def test_untracked_selected_source_rejected(self):
-        (self.source / 'untracked.txt').write_text('unreviewed')
-        with self.assertRaises(sync.Conflict):
-            self.apply()
-
-    def test_source_changed_after_preflight_rolls_back_prior_copy(self):
-        self.local()
-        before = sync.snapshot(self.target)
-        original = sync.check_revision
-        calls = 0
-        def change_later(*args):
-            nonlocal calls
-            calls += 1
-            if calls == 4:
-                (self.source / 'a.txt').write_text('changed during installation')
-            return original(*args)
-        with patch.object(sync, 'check_revision', side_effect=change_later):
-            with self.assertRaises(sync.Conflict):
-                self.apply()
-        self.assertEqual(sync.snapshot(self.target), before)
-        self.assertEqual(json.loads((self.backup / 'receipt.json').read_text())['status'], 'rolled-back')
-
-    def test_mid_copy_failure_rolls_back_existing_and_created_target(self):
-        for existing in [False, True]:
-            with self.subTest(existing=existing):
-                if existing:
-                    self.local()
-                before = sync.snapshot(self.target)
-                original = os.replace
-                calls = 0
-                def fail_second(*args):
-                    nonlocal calls
-                    calls += 1
-                    if calls == 2:
-                        raise OSError('fixture disk error')
-                    return original(*args)
-                backup = self.root / f'backup-{existing}'
-                with patch.object(sync.os, 'replace', side_effect=fail_second):
-                    with self.assertRaises(OSError):
-                        self.apply(backup=backup)
-                self.assertEqual(sync.snapshot(self.target), before)
-                self.assertEqual(json.loads((backup / 'receipt.json').read_text())['status'], 'rolled-back')
-
-    def test_rollback_preserves_concurrent_edits_and_records_conflict(self):
-        self.local()
-        original = os.replace
-        calls = 0
-        def compete_then_fail(*args):
-            nonlocal calls
-            calls += 1
-            if calls == 2:
-                (self.target / 'SKILL.md').write_text('another owner edited this')
-                raise OSError('fixture failure')
-            return original(*args)
-        with patch.object(sync.os, 'replace', side_effect=compete_then_fail):
-            with self.assertRaises(OSError):
-                self.apply()
-        self.assertEqual((self.target / 'SKILL.md').read_text(), 'another owner edited this')
-        receipt = json.loads((self.backup / 'receipt.json').read_text())
-        self.assertEqual(receipt['status'], 'rollback-conflict')
-        self.assertEqual(receipt['rollback_conflicts'], ['SKILL.md'])
-
-    def test_target_file_directory_collision_fails_before_backup(self):
-        self.local()
-        (self.target / 'a.txt').mkdir()
-        with self.assertRaises(sync.Conflict):
-            self.apply()
-        self.assertFalse(self.backup.exists())
+    def test_invalid_revision_blocked_without_mutation(self):
+        before = sync.snapshot(self.root)
+        for revision in ['main', 'HEAD', 'bad-sha', 'f' * 40]:
+            code, _ = self.run_cli('--source-revision', revision)
+            self.assertEqual(code, 2)
+        self.assertEqual(sync.snapshot(self.root), before)
 
 
 if __name__ == '__main__':
